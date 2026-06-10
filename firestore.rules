@@ -1,0 +1,71 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Catch-all default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Primitive Helpers
+    function isSignedIn() { return request.auth != null; }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Audit Entity Schema Guard
+    function isValidAudit(data) {
+      return data.keys().hasAll([
+        'id', 'auditorName', 'auditorEmail', 'zone', 'zoneGroup', 'date',
+        'checklistImg', 'siteImg', 'scores', 'totalScore', 'maxScore',
+        'compliancePercentage'
+      ]) 
+      && data.keys().size() <= 15 // Supports optional fields like 'feedback' or system elements
+      && data.id is string && data.id.size() <= 128
+      && data.auditorName is string && data.auditorName.size() <= 200
+      && data.auditorEmail is string && data.auditorEmail.size() <= 200
+      && data.zone is string && data.zone.size() <= 200
+      && data.zoneGroup is string && data.zoneGroup.size() <= 100
+      && data.date is string && data.date.size() <= 50
+      && data.checklistImg is string && data.checklistImg.size() <= 2000000 // Up to 2MB base64 images
+      && data.siteImg is string && data.siteImg.size() <= 2000000
+      && data.totalScore is int && data.totalScore >= 0 && data.totalScore <= 25
+      && data.maxScore is int && data.maxScore == 25
+      && data.compliancePercentage is number && data.compliancePercentage >= 0.0 && data.compliancePercentage <= 100.0;
+    }
+
+    // Admin Chat Entity Schema Guard
+    function isValidAdminChat(data) {
+      return data.keys().hasAll([
+        'id', 'senderName', 'senderPin', 'message', 'zone'
+      ])
+      && data.keys().size() <= 7 // Supports optional system fields like 'createdAt'
+      && data.id is string && data.id.size() <= 128
+      && data.senderName is string && data.senderName.size() <= 200
+      && data.senderPin is string && data.senderPin.size() <= 50
+      && data.message is string && data.message.size() <= 2000
+      && data.zone is string && data.zone.size() <= 200;
+    }
+
+    // Audits Collection Access Rules
+    match /audits/{auditId} {
+      // Allow any submission that fits our exact payload criteria (client can be anonymous or guest-based)
+      allow create: if isValidId(auditId) && isValidAudit(incoming());
+      
+      // HODs and operations officers require retrieval to load reports, search, and download spreadsheets
+      allow read: if true;
+      
+      // Once written, audits are immutable legal compliance records and cannot be overwritten or deleted
+      allow update, delete: if false;
+    }
+
+    // Admin Chats Collection Access Rules
+    match /admin_chats/{chatId} {
+      allow create: if isValidId(chatId) && isValidAdminChat(incoming());
+      allow read: if true;
+      allow update, delete: if false;
+    }
+  }
+}

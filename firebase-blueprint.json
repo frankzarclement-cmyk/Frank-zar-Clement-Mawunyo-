@@ -1,0 +1,131 @@
+{
+  "entities": {
+    "audit": {
+      "title": "5S Audit Submission",
+      "description": "An audit record representing a 1S (Sort) verification containing checklist scores, photos, and compliance stats.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of the audit."
+        },
+        "auditorName": {
+          "type": "string",
+          "description": "FullName of the officer executing the 5S audit."
+        },
+        "auditorEmail": {
+          "type": "string",
+          "description": "Email address of the auditing officer."
+        },
+        "zone": {
+          "type": "string",
+          "description": "The specific area or office where the 5S was conducted."
+        },
+        "zoneGroup": {
+          "type": "string",
+          "description": "Whether the zone belongs to the 'General' selection or the 'SMS' department."
+        },
+        "date": {
+          "type": "string",
+          "description": "The date when the audit was performed (YYYY-MM-DD)."
+        },
+        "checklistImg": {
+          "type": "string",
+          "description": "Base64 encoded image of the paper checklist layout scanned/captured by the app."
+        },
+        "siteImg": {
+          "type": "string",
+          "description": "Base64 encoded image of the real-world location where the 5S was performed."
+        },
+        "scores": {
+          "type": "object",
+          "description": "The 1S checklist parameter scores graded 1 to 5."
+        },
+        "totalScore": {
+          "type": "integer",
+          "description": "Sum of all score items."
+        },
+        "maxScore": {
+          "type": "integer",
+          "description": "Maximum possible score of the audit checklist."
+        },
+        "compliancePercentage": {
+          "type": "number",
+          "description": "Computed 1S compliance percentage (totalScore / maxScore * 100)."
+        },
+        "feedback": {
+          "type": "string",
+          "description": "Optional notes or corrective actions."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of data submission."
+        }
+      },
+      "required": [
+        "id",
+        "auditorName",
+        "auditorEmail",
+        "zone",
+        "zoneGroup",
+        "date",
+        "checklistImg",
+        "siteImg",
+        "scores",
+        "totalScore",
+        "maxScore",
+        "compliancePercentage"
+      ]
+    },
+    "admin_chat": {
+      "title": "Admin Coordinator Chat",
+      "description": "Real-time coordinator message chatter between verified HODs, 5S Officers, and inspectors.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of the message."
+        },
+        "senderName": {
+          "type": "string",
+          "description": "Display name of the logged-in administrator."
+        },
+        "senderPin": {
+          "type": "string",
+          "description": "Authorized PIN code used to post the message (e.g. '1029', '5432' or '8888')."
+        },
+        "message": {
+          "type": "string",
+          "description": "The message body text."
+        },
+        "zone": {
+          "type": "string",
+          "description": "The target Starsteel zone associated with the discussion, or general."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of message delivery."
+        }
+      },
+      "required": [
+        "id",
+        "senderName",
+        "senderPin",
+        "message",
+        "zone"
+      ]
+    }
+  },
+  "firestore": {
+    "/audits/{auditId}": {
+      "schema": "#/entities/audit",
+      "description": "Submissions of 1S audits conducted across the different Starsteel zones."
+    },
+    "/admin_chats/{chatId}": {
+      "schema": "#/entities/admin_chat",
+      "description": "Logs of coordination messages between 5S Admin Officers and HODs."
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "Starsteel 5S ZONE-WISE 1S AUDIT PERFORMANCE (%)",
+  "description": "Interactive dual-portal linking device camera scanning (via server-side Gemini 3.5 checklist paper parsing) directly to a persistent database with downloadable Excel sheets and live HOD metrics.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@keyframes starsteel-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+#starsteels_brand_logo {
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#starsteels_brand_logo:hover {
+  transform: scale(1.03);
+}
+
+#starsteels_brand_logo svg {
+  transform-origin: center;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#starsteels_brand_logo:hover svg {
+  animation: starsteel-pulse 1.8s ease-in-out infinite;
+}
